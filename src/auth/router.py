@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
-from auth.base_config import fastapi_users
-from auth.models import User
+from src.auth.base_config import fastapi_users
+from src.auth.models import User
 
 router = APIRouter(
     prefix="/protect",
