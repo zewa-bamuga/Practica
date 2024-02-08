@@ -1,29 +1,20 @@
+#создание и верификация jwt (по сути, ничего менять не надо)
 import jwt
-import time
 from datetime import datetime, timedelta
 
-from src.auth.schemas import User
-
+SECRET_KEY = "e95a3684b9982fcfd46eea716707f80cef515906eb49c4cb961dfde39a41ce21"
 ALGORITHM = "HS256"
 EXPIRATION_TIME = timedelta(minutes=30)
-SECRET_KEY = "e95a3684b9982fcfd46eea716707f80cef515906eb49c4cb961dfde39a41ce21"
 
-def token_response(token: str):
-    return {
-        "access_token": token
-    }
+def create_jwt_token(data: dict):
+    expiration = datetime.utcnow() + EXPIRATION_TIME
+    data.update({"exp": expiration})
+    token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
+    return token
 
-def signJWT(user: User):
-    payload = {
-        "user": user,
-        "exp": time.time() + 600
-    }
-    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-    return token_response(token)
-
-def decodeJWT(token: str):
+def verify_jwt_token(token: str):
     try:
-        decode_token = jwt.decode(token, SECRET_KEY, algorithm=ALGORITHM)
-        return decode_token if decode_token['exp'] >= time.time() else None
-    except:
-        return {}
+        decoded_data = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return decoded_data
+    except jwt.PyJWTError:
+        return None

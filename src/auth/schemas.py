@@ -1,6 +1,6 @@
 from fastapi_users import schemas
 from pydantic import constr, validator, BaseModel, EmailStr
-import re
+
 
 class UserBase(BaseModel):
     email: str
