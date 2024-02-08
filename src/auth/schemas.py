@@ -18,6 +18,7 @@ class User(UserBase):
 class Token(BaseModel):
     access_token: str
 
+
 # class UserCreate(schemas.BaseUserCreate):
 #     @validator('email')
 #     def validate_email(cls, value):
