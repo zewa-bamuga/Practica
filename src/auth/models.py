@@ -20,14 +20,6 @@ user = Table(
     Column("role_id", Integer, ForeignKey(role.c.id)),
 )
 
-token = Table(
-    "token",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("access_token", String, unique=True, index=True),
-    Column("user_id", Integer, ForeignKey(user.c.id)),
-)
-
 class User(Base):
     __tablename__ = "user"
 
@@ -35,10 +27,3 @@ class User(Base):
     email = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
     role_id = Column(Integer, ForeignKey(role.c.id))
-
-class Token(Base):
-    __tablename__ = "token"
-
-    id = Column(Integer, primary_key=True)
-    access_token = Column(String, unique=True, index=True)
-    user_id = Column(Integer, ForeignKey(user.c.id))

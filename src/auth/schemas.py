@@ -1,9 +1,7 @@
-from fastapi_users import schemas
 from pydantic import constr, validator, BaseModel, EmailStr
 
-
 class UserBase(BaseModel):
-    email: str
+    email: EmailStr
 
 class UserCreate(UserBase):
     password: str
@@ -15,9 +13,8 @@ class User(UserBase):
     class Config:
         orm_mode = True
 
-class Token(BaseModel):
-    access_token: str
 
+#Оставил валидацию почты и пароля на будущее
 
 # class UserCreate(schemas.BaseUserCreate):
 #     @validator('email')
@@ -37,11 +34,3 @@ class Token(BaseModel):
 #         return value
 #
 #     password: constr(min_length=8, max_length=16)
-#
-# class UserRead(schemas.BaseUser[int]):
-#     id: int
-#     email: str
-#     role_id: int
-#
-#     class Config:
-#         from_attributes = True
