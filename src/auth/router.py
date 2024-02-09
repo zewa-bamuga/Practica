@@ -3,7 +3,7 @@ from fastapi import Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth import schemas
-from src.auth.jwt import create_jwt_token
+from src.auth.jwt import create_jwt_token, delete_jwt_token
 from src.auth.models import User
 from src.auth.functions import register_async, pwd_context, get_current_user
 from src.database import get_async_session
@@ -28,6 +28,11 @@ async def authenticate_user(user_email: str, user_password: str, response: Respo
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     create_jwt_token(response, {"sub": user.email})
     return {"access_token": "Bearer"}
+
+@router.post("/logout")
+async def logout(response: Response):
+    delete_jwt_token(response)
+    return {"message": "Вы успешно вышли из системы"}
 
 @router.get("/get_user") # Из-за того, что не работает get_current_user и verify_jwt_token не работает и эта ((((
 def get_user(current_user: User = Depends(get_current_user)):

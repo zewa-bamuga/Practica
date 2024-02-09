@@ -21,3 +21,6 @@ def verify_jwt_token(token: str): # Походу эта функция не рб
     except jwt.PyJWTError as e:
         print("JWT ошибка декодированияr:", e)
         return None
+
+def delete_jwt_token(response: Response):
+    response.delete_cookie(key="access_token")
