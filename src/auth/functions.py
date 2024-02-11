@@ -36,3 +36,18 @@ async def authenticate_async(user_email: str, user_password: str, session: Async
 
     jwt_token = create_jwt_token({"sub": user.email})
     return {"access_token": jwt_token, "token_type": "bearer"}
+
+async def change_password_async(user_email: str, old_password: str, new_password: str, session: AsyncSession = Depends(get_async_session)):
+    existing_user = await session.execute(select(User).where(User.email == user_email))
+    user = existing_user.scalar()
+
+    if not user:
+        raise HTTPException(status_code=400, detail="User not found")
+
+    is_old_password_correct = pwd_context.verify(old_password, user.hashed_password)
+    if not is_old_password_correct:
+        raise HTTPException(status_code=400, detail="Incorrect old password")
+
+    user.hashed_password = pwd_context.hash(new_password)
+    await session.commit()
+    return {"message": "Password updated successfully"}
