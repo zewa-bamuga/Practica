@@ -23,16 +23,10 @@ async def verify_jwt_token(access_token: str, session: AsyncSession = Depends(ge
     try:
         decoded_data = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
         user_email = decoded_data.get("sub")
-
         existing_user = await session.execute(select(User).where(User.email == user_email))
         user = existing_user.scalar_one_or_none()
-
         if user:
-            print("Пользователь из JWT токена:")
-            print(f"ID: {user.id}")
-            print(f"Email: {user.email}")
-
-        return decoded_data
+            return decoded_data, user
     except jwt.PyJWTError as e:
         print("JWT ошибка декодирования:", e)
-        return None, None
+    return None, None
