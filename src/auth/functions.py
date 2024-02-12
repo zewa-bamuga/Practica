@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.auth.jwt import create_jwt_token
+from src.auth.jwt import create_jwt_token, verify_jwt_token
 from src.auth.models import User
 from src.auth.schemas import UserCreate
 from src.database import get_async_session
@@ -51,3 +51,9 @@ async def change_password_async(user_email: str, old_password: str, new_password
     user.hashed_password = pwd_context.hash(new_password)
     await session.commit()
     return {"message": "Пароль успешно обновлен"}
+
+async def is_user_authenticated(access_token: str = Depends(apikey_scheme), session: AsyncSession = Depends(get_async_session)):
+    decoded_token, user = await verify_jwt_token(access_token, session)
+    if user is None:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    return user

@@ -18,7 +18,6 @@ def create_jwt_token(data: dict):
     token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
     return token
 
-
 async def verify_jwt_token(access_token: str, session: AsyncSession = Depends(get_async_session)):
     try:
         decoded_data = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
