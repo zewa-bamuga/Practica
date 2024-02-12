@@ -4,6 +4,7 @@ from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.auth import schemas
 from src.auth.jwt import create_jwt_token, verify_jwt_token
 from src.auth.models import User
 from src.auth.schemas import UserCreate
@@ -23,7 +24,11 @@ async def register_async(user_data: UserCreate, session: AsyncSession = Depends(
     await session.commit()
     return user
 
-async def authenticate_async(user_email: str, user_password: str, session: AsyncSession = Depends(get_async_session)):
+
+async def authenticate_async(user_data: schemas.UserCreate, session: AsyncSession = Depends(get_async_session)):
+    user_email = user_data.email
+    user_password = user_data.password
+
     existing_user = await session.execute(select(User).where(User.email == user_email))
     user = existing_user.scalar()
 
@@ -36,6 +41,7 @@ async def authenticate_async(user_email: str, user_password: str, session: Async
 
     jwt_token = create_jwt_token({"sub": user.email})
     return {"access_token": jwt_token, "token_type": "bearer"}
+
 
 async def change_password_async(user_email: str, old_password: str, new_password: str, session: AsyncSession = Depends(get_async_session)):
     existing_user = await session.execute(select(User).where(User.email == user_email))

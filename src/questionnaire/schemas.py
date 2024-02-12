@@ -1,4 +1,4 @@
-from typing import Optional,Dict
+from typing import List
 
 from pydantic import BaseModel
 
@@ -19,6 +19,4 @@ class SurveySchema(SurveyBaseSchema):
         orm_mode = True
 
 class UserResponseSchema(BaseModel):
-    answer: str
-    class Config:
-        orm_mode = True
+    survey_id: List[int]

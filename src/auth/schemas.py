@@ -23,3 +23,14 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class UserGet(BaseModel):
+    email: EmailStr
+
+    class Config:
+        orm_mode = True
+
+class ChangePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str
