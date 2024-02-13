@@ -8,7 +8,7 @@ class AllQuestionSchema(BaseModel):
     title: str
     description: str
     points: int
-    distanse: float
+    distance: float
     time: float
     price: float
     rating: float

@@ -21,6 +21,13 @@ class UserCreate(UserBase):
             raise ValueError('Пароль должен содержать по крайней мере одну букву и одну цифру или специальный символ')
         return v
 
+class UserData(UserBase):
+    id: int
+    role_id: int
+
+    class Config:
+        orm_mode = True
+
 
 class User(UserBase):
     id: int

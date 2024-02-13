@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.functions import is_user_authenticated
-from src.auth.models import User, route_rating, RouteRating
+from src.auth.models import User, RouteRating
 from src.database import get_async_session
 from src.questionnaire.schemas import ShortQuestionSchema, AllQuestionSchema, RouteRatingCreate
 from src.walk.functions import get_user_questions, get_question_by_id

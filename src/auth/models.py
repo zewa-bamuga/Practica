@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, JSON, MetaData, Table, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, JSON, MetaData, Table, Float, engine
 from sqlalchemy.orm import relationship
 from src.database import Base
 
@@ -28,15 +28,6 @@ survey = Table(
     Column("category", String, nullable=False),
 )
 
-route_rating = Table(
-    "route_rating",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("user_id", Integer, ForeignKey(user.c.id)),
-    Column("survey_id", Integer, ForeignKey(survey.c.id)),
-    Column("rating", Float),
-)
-
 user_response = Table(
     "user_response",
     metadata,
@@ -54,7 +45,7 @@ question = Table(
     Column("short_description", String),
 
     Column("points", Integer),
-    Column("distanse", Float),
+    Column("distance", Float),  # Исправлено на "distance"
     Column("time", Float),
 
     Column("price", Float),
@@ -62,23 +53,29 @@ question = Table(
     Column("survey_id", Integer, ForeignKey(survey.c.id)),
 )
 
+route_rating = Table(
+    "route_rating",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("user_id", Integer, ForeignKey(user.c.id)),
+    Column("survey_id", Integer, ForeignKey(survey.c.id)),
+    Column("rating", Float),
+)
 
-class RouteRating(Base):
-    __tablename__ = "route_rating"
+class Role(Base):
+    __tablename__ = "role"
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
-    user = relationship("User", back_populates="route_ratings")
-    survey_id = Column(Integer, ForeignKey("survey.id"))
-    survey = relationship("Survey", back_populates="route_ratings")
-    rating = Column(Float)
+    name = Column(String, nullable=False)
+    permissions = Column(JSON)
 
 class User(Base):
     __tablename__ = "user"
     id = Column(Integer, primary_key=True)
     email = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
-    role_id = Column(Integer, ForeignKey(role.c.id))
+    role_id = Column(Integer, ForeignKey(Role.id))  # Обновлено: ForeignKey(Role.id) вместо "role.id"
     route_ratings = relationship("RouteRating", back_populates="user")
+
 
 class Survey(Base):
     __tablename__ = "survey"
@@ -90,13 +87,12 @@ class Survey(Base):
 
 class Question(Base):
     __tablename__ = 'question'
-
     id = Column(Integer, primary_key=True)
     title = Column(String)
     description = Column(String)
     short_description = Column(String)
     points = Column(Integer)
-    distanse = Column(Float)
+    distance = Column(Float)  # Исправлено на "distance"
     time = Column(Float)
     price = Column(Float)
     rating = Column(Float)
@@ -107,7 +103,19 @@ class Question(Base):
 
 class UserResponse(Base):
     __tablename__ = 'user_response'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    survey_id = Column(Integer, ForeignKey('survey.id'))
+
+
+class RouteRating(Base):
+    __tablename__ = 'route_rating'
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'))
     survey_id = Column(Integer, ForeignKey('survey.id'))
+    rating = Column(Float)
+
+    # Определяем отношение с User
+    user = relationship("User")
+    survey = relationship("Survey")  # Добавлено определение связи с классом Survey
