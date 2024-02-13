@@ -14,6 +14,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 apikey_scheme = APIKeyHeader(name="Authorization")
 
+
 async def register_async(user_data: UserCreate, session: AsyncSession = Depends(get_async_session)):
     existing_user = await session.execute(select(User).where(User.email == user_data.email))
     if existing_user.scalar():
@@ -43,7 +44,8 @@ async def authenticate_async(user_data: schemas.UserCreate, session: AsyncSessio
     return {"access_token": jwt_token, "token_type": "bearer"}
 
 
-async def change_password_async(user_email: str, old_password: str, new_password: str, session: AsyncSession = Depends(get_async_session)):
+async def change_password_async(user_email: str, old_password: str, new_password: str,
+                                session: AsyncSession = Depends(get_async_session)):
     existing_user = await session.execute(select(User).where(User.email == user_email))
     user = existing_user.scalar()
 
@@ -58,7 +60,9 @@ async def change_password_async(user_email: str, old_password: str, new_password
     await session.commit()
     return {"message": "Пароль успешно обновлен"}
 
-async def is_user_authenticated(access_token: str = Depends(apikey_scheme), session: AsyncSession = Depends(get_async_session)):
+
+async def is_user_authenticated(access_token: str = Depends(apikey_scheme),
+                                session: AsyncSession = Depends(get_async_session)):
     decoded_token, user = await verify_jwt_token(access_token, session)
     if user is None:
         raise HTTPException(status_code=404, detail="Пользователь не найден")

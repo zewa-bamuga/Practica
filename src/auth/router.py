@@ -30,7 +30,8 @@ async def get_user_info(user: UserGet = Depends(is_user_authenticated)):
 
 
 @router.post("/change-password")
-async def change_password(request_data: ChangePasswordRequest, current_user: User = Depends(is_user_authenticated), session: AsyncSession = Depends(get_async_session)):
+async def change_password(request_data: ChangePasswordRequest, current_user: User = Depends(is_user_authenticated),
+                          session: AsyncSession = Depends(get_async_session)):
     user_email = current_user.email
     old_password = request_data.old_password
     new_password = request_data.new_password

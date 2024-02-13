@@ -12,6 +12,7 @@ async def get_survey_questions(session: AsyncSession):
         surveys = await async_session.execute(query)
         return [SurveyBaseSchema(id=survey.id, category=survey.category) for survey in surveys.scalars().all()]
 
+
 async def process_survey_response(response: UserResponseSchema, user: User, async_session: AsyncSession):
     async with async_session as session:
         for survey_id in response.survey_id:
@@ -21,13 +22,15 @@ async def process_survey_response(response: UserResponseSchema, user: User, asyn
                 .filter(UserResponse.survey_id == survey_id)
             )
             if existing_response.scalar():
-                raise HTTPException(status_code=400, detail=f"Пользователь уже ответил на вопросы опроса с id {survey_id}")
+                raise HTTPException(status_code=400,
+                                    detail=f"Пользователь уже ответил на вопросы опроса с id {survey_id}")
 
             result = await session.execute(
                 select(Survey).filter(Survey.id == survey_id)
             )
             if not result.scalar():
-                raise HTTPException(status_code=404, detail=f"Результаты запроса для опроса с id {survey_id} отсутствуют")
+                raise HTTPException(status_code=404,
+                                    detail=f"Результаты запроса для опроса с id {survey_id} отсутствуют")
 
             survey = await async_session.get(Survey, survey_id)
             if not survey:
