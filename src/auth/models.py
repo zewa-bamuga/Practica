@@ -28,12 +28,21 @@ survey = Table(
     Column("category", String, nullable=False),
 )
 
+route_rating = Table(
+    "route_rating",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("user_id", Integer, ForeignKey(user.c.id)),
+    Column("survey_id", Integer, ForeignKey(survey.c.id)),
+    Column("rating", Float),
+)
+
 user_response = Table(
     "user_response",
     metadata,
     Column("id", Integer, primary_key=True),
-    Column("user_id", Integer, ForeignKey("user.id")),
-    Column("survey_id", Integer, ForeignKey("survey.id")),
+    Column("user_id", Integer, ForeignKey(user.c.id)),
+    Column("survey_id", Integer, ForeignKey(survey.c.id)),
 )
 
 question = Table(
@@ -50,25 +59,33 @@ question = Table(
 
     Column("price", Float),
     Column("rating", Float),
-    Column("survey_id", Integer, ForeignKey("survey.id")),
+    Column("survey_id", Integer, ForeignKey(survey.c.id)),
 )
 
 
+class RouteRating(Base):
+    __tablename__ = "route_rating"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship("User", back_populates="route_ratings")
+    survey_id = Column(Integer, ForeignKey("survey.id"))
+    survey = relationship("Survey", back_populates="route_ratings")
+    rating = Column(Float)
+
 class User(Base):
     __tablename__ = "user"
-
     id = Column(Integer, primary_key=True)
     email = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
     role_id = Column(Integer, ForeignKey(role.c.id))
-
+    route_ratings = relationship("RouteRating", back_populates="user")
 
 class Survey(Base):
     __tablename__ = "survey"
-
     id = Column(Integer, primary_key=True)
     category = Column(String, nullable=False)
     questions = relationship("Question", back_populates="survey")
+    route_ratings = relationship("RouteRating", back_populates="survey")
 
 
 class Question(Base):

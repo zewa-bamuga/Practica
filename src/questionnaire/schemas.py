@@ -7,6 +7,9 @@ class AllQuestionSchema(BaseModel):
     id: int
     title: str
     description: str
+    points: int
+    distanse: float
+    time: float
     price: float
     rating: float
 
@@ -24,6 +27,9 @@ class ShortQuestionSchema(BaseModel):
     class Config:
         orm_mode = True
 
+class RouteRatingCreate(BaseModel):
+    survey_id: int
+    rating: float
 
 class SurveyBaseSchema(BaseModel):
     id: int
