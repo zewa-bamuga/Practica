@@ -16,7 +16,7 @@ class AllQuestionSchema(BaseModel):
     class Config:
         orm_mode = True
 
-
+#типы данных не совпадают в function.py
 class ShortQuestionSchema(BaseModel):
     id: int
     title: str
