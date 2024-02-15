@@ -27,9 +27,11 @@ class ShortQuestionSchema(BaseModel):
     class Config:
         orm_mode = True
 
+
 class RouteRatingCreate(BaseModel):
-    survey_id: int
+    question_id: int
     rating: float
+
 
 class SurveyBaseSchema(BaseModel):
     id: int
