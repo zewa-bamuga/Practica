@@ -27,5 +27,4 @@ async def get_event_by_id(
         user: User = Depends(is_user_authenticated),
         session: AsyncSession = Depends(get_async_session)
 ):
-    event = await get_historical_event_by_id(session, event_id)
-    return event
+    return await get_historical_event_by_id(session, event_id)
