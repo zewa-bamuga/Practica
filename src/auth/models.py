@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, JSON, MetaData, Table, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, JSON, MetaData, Table, Float, Date
 from sqlalchemy.orm import relationship
 from src.database import Base
 
@@ -62,6 +62,15 @@ route_rating = Table(
     Column("rating", Float),
 )
 
+historical_events = Table(
+    "historical_events",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("name", String),
+    Column("event_date", Date),
+    Column("event_description", String),
+)
+
 
 class Role(Base):
     __tablename__ = "role"
@@ -119,3 +128,12 @@ class RouteRating(Base):
 
     user = relationship("User")
     question = relationship("Question")
+
+
+class HistoricalEvent(Base):
+    __tablename__ = 'historical_events'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    event_date = Column(Date)
+    event_description = Column(String)
