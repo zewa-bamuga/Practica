@@ -6,7 +6,7 @@ from src.auth.models import User
 from src.auth.schemas import UserGet, ChangePasswordRequest
 from src.database import get_async_session
 from src.profile.functions import change_password_async, leave_feedback_async
-from src.profile.schemas import FeedbackCreate, Feedback, FeedbackBase
+from src.profile.schemas import FeedbackCreate, FeedbackBase
 
 router = APIRouter(
     prefix="/profile",

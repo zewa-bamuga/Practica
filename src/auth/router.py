@@ -1,11 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth import schemas
-from src.auth.functions import register_async, authenticate_async, verify_reset_password_code, pwd_context, \
-    request_password_reset, confirm_password_reset
-from src.auth.models import User
+from src.auth.functions import register_async, authenticate_async, request_password_reset, confirm_password_reset
 from src.auth.schemas import PasswordResetRequest, PasswordResetConfirm
 from src.database import get_async_session
 
