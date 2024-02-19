@@ -6,6 +6,19 @@ from src.auth.models import User, UserResponse, Question, RouteRating
 from src.questionnaire.schemas import ShortQuestionSchema, AllQuestionSchema, RouteRatingCreate
 
 
+async def get_user_questions(user: User, async_session: AsyncSession) -> list[ShortQuestionSchema]:
+    await update_question_ratings(async_session)
+    async with async_session as session:
+        user_responses = await session.execute(select(UserResponse).filter(UserResponse.user_id == user.id))
+        survey_ids = [user_response.survey_id for user_response in user_responses.scalars().all()]
+        user_questions = await session.execute(
+            select(Question)
+            .filter(Question.survey_id.in_(survey_ids))
+            .distinct(Question.title)
+        )
+        return user_questions.scalars().all()
+
+
 async def update_question_ratings(async_session: AsyncSession):
     async with async_session as session:
         questions = await session.execute(select(Question))
@@ -15,15 +28,6 @@ async def update_question_ratings(async_session: AsyncSession):
             )
             question.rating = average_rating or 0
         await session.commit()
-
-
-async def get_user_questions(user: User, async_session: AsyncSession) -> list[ShortQuestionSchema]:
-    await update_question_ratings(async_session)
-    async with async_session as session:
-        user_responses = await session.execute(select(UserResponse).filter(UserResponse.user_id == user.id))
-        survey_ids = [user_response.survey_id for user_response in user_responses.scalars().all()]
-        user_questions = await session.execute(select(Question).filter(Question.survey_id.in_(survey_ids)))
-        return user_questions.scalars().all()
 
 
 async def get_question_by_id(question_id: int, user: User, async_session: AsyncSession) -> AllQuestionSchema:
