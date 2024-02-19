@@ -71,6 +71,17 @@ historical_events = Table(
     Column("event_description", String),
 )
 
+feedback = Table(
+    "feedback",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("user_id", Integer, ForeignKey("user.id"), nullable=False),
+    Column("text", String, nullable=False),
+    Column("device_name", String),
+    Column("os_version", String),
+    Column("app_version", String)
+)
+
 
 class Role(Base):
     __tablename__ = "role"
@@ -81,11 +92,14 @@ class Role(Base):
 
 class User(Base):
     __tablename__ = "user"
+
     id = Column(Integer, primary_key=True)
     email = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
     role_id = Column(Integer, ForeignKey(Role.id))
+
     route_ratings = relationship("RouteRating", back_populates="user")
+    feedbacks = relationship("Feedback", back_populates="user")
 
 
 class Survey(Base):
@@ -137,3 +151,16 @@ class HistoricalEvent(Base):
     name = Column(String)
     event_date = Column(Date)
     event_description = Column(String)
+
+
+class Feedback(Base):
+    __tablename__ = "feedback"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    text = Column(String, nullable=False)
+    device_name = Column(String)
+    os_version = Column(String)
+    app_version = Column(String)
+
+    user = relationship("User", back_populates="feedbacks")

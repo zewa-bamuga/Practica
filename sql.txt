@@ -23,8 +23,6 @@ __КАЛЕНДАРЬ__
 16) Возможность посмотреть как добраться до точки, связанной с историческим событием
 
 Что дальше:
-1) Профиль пользователя
-2) Обратная связь
 3) Панель администратора
 3.1 Авторизация
 3.2 Работа с городами
@@ -36,11 +34,14 @@ __КАЛЕНДАРЬ__
 
 insert into role values (1, 'user', null), (2, 'admin', null);
 
+select * from alembic_version;
 select * from question;
 select * from route_rating;
 select * from survey;
 select * from public.user;
 select * from user_response;
+select * from feedback;
+
 
 ТУТ ЗАПОЛНЕНИЕ ТАБЛИЦЫ survey
 

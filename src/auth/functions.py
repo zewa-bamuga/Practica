@@ -44,23 +44,6 @@ async def authenticate_async(user_data: schemas.UserCreate, session: AsyncSessio
     return {"access_token": jwt_token, "token_type": "bearer"}
 
 
-async def change_password_async(user_email: str, old_password: str, new_password: str,
-                                session: AsyncSession = Depends(get_async_session)):
-    existing_user = await session.execute(select(User).where(User.email == user_email))
-    user = existing_user.scalar()
-
-    if not user:
-        raise HTTPException(status_code=400, detail="Пользователь не найден")
-
-    is_old_password_correct = pwd_context.verify(old_password, user.hashed_password)
-    if not is_old_password_correct:
-        raise HTTPException(status_code=400, detail="Неправильный старый пароль")
-
-    user.hashed_password = pwd_context.hash(new_password)
-    await session.commit()
-    return {"message": "Пароль успешно обновлен"}
-
-
 async def is_user_authenticated(access_token: str = Depends(apikey_scheme),
                                 session: AsyncSession = Depends(get_async_session)):
     decoded_token, user = await verify_jwt_token(access_token, session)
