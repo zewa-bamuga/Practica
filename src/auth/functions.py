@@ -1,3 +1,6 @@
+import smtplib
+from email.message import EmailMessage
+
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, APIKeyHeader
 from passlib.context import CryptContext
@@ -23,7 +26,29 @@ async def register_async(user_data: UserCreate, session: AsyncSession = Depends(
     user = User(email=user_data.email, hashed_password=pwd_context.hash(user_data.password), role_id=1)
     session.add(user)
     await session.commit()
+
+    await send_verification_token(user)
+
     return user
+
+
+async def send_verification_token(user: User):
+    email_address = "tikhonov.igor2028@yandex.ru"
+    email_password = "abqiulywjvibrefg"
+
+    msg = EmailMessage()
+    msg['Subject'] = "Подтверждение регистрации"
+    msg['From'] = email_address
+    msg['To'] = user.email
+    msg.set_content(
+        f"""\
+        Вы успешно зарегистрировались на платформе Путеводитель по необычным местам!
+        """
+    )
+
+    with smtplib.SMTP_SSL('smtp.yandex.ru', 465) as smtp:
+        smtp.login(email_address, email_password)
+        smtp.send_message(msg)
 
 
 async def authenticate_async(user_data: schemas.UserCreate, session: AsyncSession = Depends(get_async_session)):
