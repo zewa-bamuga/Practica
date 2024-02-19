@@ -94,6 +94,14 @@ password_reset_code = Table(
     Column("created_at", DateTime, nullable=False)
 )
 
+favorite_route = Table(
+    "favorite_route",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("user_id", Integer, ForeignKey("user.id")),
+    Column("question_id", Integer, ForeignKey("question.id"))
+)
+
 
 class Role(Base):
     __tablename__ = "role"
@@ -191,3 +199,11 @@ class PasswordResetCode(Base):
     @classmethod
     def generate_code(cls) -> str:
         return secrets.token_urlsafe(6)
+
+
+class FavoriteRoute(Base):
+    __tablename__ = 'favorite_route'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    question_id = Column(Integer, ForeignKey('question.id'))

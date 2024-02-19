@@ -16,7 +16,8 @@ class AllQuestionSchema(BaseModel):
     class Config:
         orm_mode = True
 
-#типы данных не совпадают в function.py
+
+# типы данных не совпадают в function.py
 class ShortQuestionSchema(BaseModel):
     id: int
     title: str
@@ -48,3 +49,7 @@ class SurveySchema(SurveyBaseSchema):
 
 class UserResponseSchema(BaseModel):
     survey_id: List[int]
+
+
+class RouteOperationSchema(BaseModel):
+    question_id: int

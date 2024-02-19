@@ -31,5 +31,5 @@ async def password_reset_confirm(password_reset_confirm: PasswordResetConfirm,
 
 
 @router.post("/authentification")
-async def authenticate_user_route(user_data: schemas.UserCreate, session: AsyncSession = Depends(get_async_session)):
+async def authenticate_user_route(user_data: schemas.UserAuth, session: AsyncSession = Depends(get_async_session)):
     return await authenticate_async(user_data, session=session)

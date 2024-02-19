@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.auth.models import User, UserResponse, Question, RouteRating
+from src.auth.models import User, UserResponse, Question, RouteRating, FavoriteRoute
 from src.questionnaire.schemas import ShortQuestionSchema, AllQuestionSchema, RouteRatingCreate
 
 
@@ -67,3 +67,56 @@ async def create_route_rating(route_rating_create: RouteRatingCreate, user: User
             session.add(new_rating)
         await session.commit()
     return {"message": "Оценка успешно добавлена или обновлена"}
+
+
+async def add_to_favorites(session, user_id: int, question_id: int):
+    existing_favorite = await session.execute(
+        select(FavoriteRoute)
+        .filter(FavoriteRoute.user_id == user_id)
+        .filter(FavoriteRoute.question_id == question_id)
+    )
+    if existing_favorite.scalar():
+        raise HTTPException(status_code=400, detail="Прогулка уже добавлена в избранное")
+
+    favorite_route = FavoriteRoute(user_id=user_id, question_id=question_id)
+    session.add(favorite_route)
+    await session.commit()
+
+    return {"message": "Прогулка успешно добавлена в избранное"}
+
+
+async def remove_from_favorites(session, user_id: int, question_id: int):
+    existing_favorite = await session.execute(
+        select(FavoriteRoute)
+        .filter(FavoriteRoute.user_id == user_id)
+        .filter(FavoriteRoute.question_id == question_id)
+    )
+    favorite_route = existing_favorite.scalar_one_or_none()
+    if not favorite_route:
+        raise HTTPException(status_code=404, detail="Прогулка не найдена в избранном")
+
+    session.delete(favorite_route)
+    await session.commit()
+
+    return {"message": "Прогулка успешно удалена из избранного"}
+
+
+async def get_favorite_routes(session, user_id: int):
+    favorite_routes = await session.execute(
+        select(Question)
+        .join(FavoriteRoute, FavoriteRoute.question_id == Question.id)
+        .filter(FavoriteRoute.user_id == user_id)
+    )
+
+    favorite_routes_list = []
+    for question in favorite_routes.scalars().all():
+        short_question = ShortQuestionSchema(
+            id=question.id,
+            title=question.title,
+            short_description=question.short_description,
+            price=question.price,
+            rating=question.rating
+        )
+        favorite_routes_list.append(short_question)
+
+    return favorite_routes_list

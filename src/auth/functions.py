@@ -124,7 +124,7 @@ async def confirm_password_reset(email: str, code: str, new_password: str, sessi
 
 
 # Функция для аутентификации пользователя
-async def authenticate_async(user_data: schemas.UserCreate, session: AsyncSession = Depends(get_async_session)):
+async def authenticate_async(user_data: schemas.UserAuth, session: AsyncSession = Depends(get_async_session)):
     user_email = user_data.email
     user_password = user_data.password
 
