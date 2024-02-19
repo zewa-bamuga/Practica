@@ -14,6 +14,13 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: constr(min_length=8, max_length=16)
+    confirm_password: constr(min_length=8, max_length=16)
+
+    @validator('confirm_password')
+    def passwords_match(cls, v, values, **kwargs):
+        if 'password' in values and v != values['password']:
+            raise ValueError('Пароли не совпадают')
+        return v
 
     @validator('password')
     def validate_password(cls, v):
@@ -47,4 +54,14 @@ class UserGet(BaseModel):
 
 class ChangePasswordRequest(BaseModel):
     old_password: str
+    new_password: str
+
+
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+
+
+class PasswordResetConfirm(BaseModel):
+    email: EmailStr
+    code: str
     new_password: str

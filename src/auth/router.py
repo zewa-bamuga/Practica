@@ -1,8 +1,12 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth import schemas
-from src.auth.functions import register_async, authenticate_async
+from src.auth.functions import register_async, authenticate_async, verify_reset_password_code, pwd_context, \
+    request_password_reset, confirm_password_reset
+from src.auth.models import User
+from src.auth.schemas import PasswordResetRequest, PasswordResetConfirm
 from src.database import get_async_session
 
 router = APIRouter(
@@ -14,6 +18,19 @@ router = APIRouter(
 @router.post("/registration", response_model=schemas.User, status_code=201)
 async def register_user_route(user_data: schemas.UserCreate, session: AsyncSession = Depends(get_async_session)):
     return await register_async(session=session, user_data=user_data)
+
+
+@router.post("/password/reset/request", status_code=200)
+async def password_reset_request(password_reset_request: PasswordResetRequest,
+                                 session: AsyncSession = Depends(get_async_session)):
+    await request_password_reset(password_reset_request.email, session)
+
+
+@router.post("/password/reset/confirm", status_code=200)
+async def password_reset_confirm(password_reset_confirm: PasswordResetConfirm,
+                                 session: AsyncSession = Depends(get_async_session)):
+    await confirm_password_reset(password_reset_confirm.email, password_reset_confirm.code,
+                                 password_reset_confirm.new_password, session)
 
 
 @router.post("/authentification")

@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import smtplib
 from email.message import EmailMessage
 
@@ -9,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth import schemas
 from src.auth.jwt import create_jwt_token, verify_jwt_token
-from src.auth.models import User
+from src.auth.models import User, PasswordResetCode
 from src.auth.schemas import UserCreate
 from src.database import get_async_session
 
@@ -27,12 +28,40 @@ async def register_async(user_data: UserCreate, session: AsyncSession = Depends(
     session.add(user)
     await session.commit()
 
-    await send_verification_token(user)
+    await send_hello(user)
 
     return user
 
 
-async def send_verification_token(user: User):
+async def send_reset_password_code(user: User, session: AsyncSession):
+    code = PasswordResetCode.generate_code()
+    confirmation_code = PasswordResetCode(user_id=user.id, code=code)
+    session.add(confirmation_code)
+    await session.commit()
+
+    # Отправить код подтверждения пользователю по электронной почте
+    # Ваш код для отправки сообщения с кодом подтверждения
+
+
+async def verify_reset_password_code(user_id: int, code: str, session: AsyncSession) -> bool:
+    confirmation_code = await session.execute(
+        select(PasswordResetCode).where(PasswordResetCode.user_id == user_id).order_by(
+            PasswordResetCode.created_at.desc()).limit(1)
+    )
+    confirmation_code = confirmation_code.scalars().first()
+
+    if not confirmation_code or confirmation_code.code != code:
+        return False
+
+    # Проверка на истечение срока действия кода (например, 15 минут)
+    expiration_time = datetime.utcnow() - timedelta(minutes=15)
+    if confirmation_code.created_at < expiration_time:
+        return False
+
+    return True
+
+
+async def send_hello(user: User):
     email_address = "tikhonov.igor2028@yandex.ru"
     email_password = "abqiulywjvibrefg"
 
@@ -43,6 +72,34 @@ async def send_verification_token(user: User):
     msg.set_content(
         f"""\
         Вы успешно зарегистрировались на платформе Путеводитель по необычным местам!
+        """
+    )
+
+    with smtplib.SMTP_SSL('smtp.yandex.ru', 465) as smtp:
+        smtp.login(email_address, email_password)
+        smtp.send_message(msg)
+
+
+async def send_verification_token(user: User, code: str):
+    email_address = "tikhonov.igor2028@yandex.ru"
+    email_password = "abqiulywjvibrefg"
+
+    msg = EmailMessage()
+    msg['Subject'] = "Сброс пароля"
+    msg['From'] = email_address
+    msg['To'] = user.email
+    msg.set_content(
+        f"""\
+        Здравствуйте,
+
+        Вы запросили сброс пароля на платформе Путеводитель по необычным местам.
+
+        Код для сброса пароля: {code}
+
+        Если вы не запрашивали сброс пароля, проигнорируйте это письмо.
+
+        С уважением,
+        Ваша команда Путеводитель по необычным местам
         """
     )
 
@@ -75,3 +132,44 @@ async def is_user_authenticated(access_token: str = Depends(apikey_scheme),
     if user is None:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     return user
+
+
+async def request_password_reset(email: str, session: AsyncSession):
+    user = await session.execute(select(User).where(User.email == email))
+    user = user.scalar()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь с таким адресом электронной почты не найден")
+
+    code = PasswordResetCode.generate_code()
+    password_reset_code = PasswordResetCode(user_id=user.id, code=code)
+    session.add(password_reset_code)
+    await session.commit()
+
+    # Отправить код сброса пароля пользователю по электронной почте
+    await send_verification_token(user, code)
+
+
+async def confirm_password_reset(email: str, code: str, new_password: str, session: AsyncSession):
+    user = await session.execute(select(User).where(User.email == email))
+    user = user.scalar()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь с таким адресом электронной почты не найден")
+
+    reset_code = await session.execute(select(PasswordResetCode).where(PasswordResetCode.user_id == user.id).order_by(
+        PasswordResetCode.created_at.desc()).limit(1))
+    reset_code = reset_code.scalar()
+
+    if not reset_code or reset_code.code != code:
+        raise HTTPException(status_code=400, detail="Неверный код сброса пароля")
+
+    # Проверка на истечение срока действия кода (например, 15 минут)
+    expiration_time = datetime.utcnow() - timedelta(minutes=15)
+    if reset_code.created_at < expiration_time:
+        raise HTTPException(status_code=400, detail="Истек срок действия кода сброса пароля")
+
+    # Установить новый пароль
+    user.hashed_password = pwd_context.hash(new_password)
+    session.delete(reset_code)
+    await session.commit()

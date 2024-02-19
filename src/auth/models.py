@@ -1,4 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, JSON, MetaData, Table, Float, Date
+import secrets
+from datetime import datetime
+
+from sqlalchemy import Column, Integer, String, ForeignKey, JSON, MetaData, Table, Float, Date, DateTime
 from sqlalchemy.orm import relationship
 from src.database import Base
 
@@ -80,6 +83,15 @@ feedback = Table(
     Column("device_name", String),
     Column("os_version", String),
     Column("app_version", String)
+)
+
+password_reset_code = Table(
+    "password_reset_code",
+    metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("user_id", Integer, ForeignKey("user.id"), nullable=False),
+    Column("code", String, nullable=False),
+    Column("created_at", DateTime, nullable=False)
 )
 
 
@@ -164,3 +176,18 @@ class Feedback(Base):
     app_version = Column(String)
 
     user = relationship("User", back_populates="feedbacks")
+
+
+class PasswordResetCode(Base):
+    __tablename__ = "password_reset_code"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
+    code = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User")
+
+    @classmethod
+    def generate_code(cls) -> str:
+        return secrets.token_urlsafe(6)
