@@ -16,7 +16,22 @@ async def get_user_questions(user: User, async_session: AsyncSession) -> list[Sh
             .filter(Question.survey_id.in_(survey_ids))
             .distinct(Question.title)
         )
-        return user_questions.scalars().all()
+        questions_with_images = []
+        for question in user_questions.scalars().all():
+            with open(question.image_path, "rb") as image_file:
+                image_data = image_file.read()
+
+            question_with_image = ShortQuestionSchema(
+                id=question.id,
+                title=question.title,
+                short_description=question.short_description,
+                price=question.price,
+                rating=question.rating,
+                image=image_data  # Добавляем данные изображения
+            )
+            questions_with_images.append(question_with_image)
+
+        return questions_with_images
 
 
 async def update_question_ratings(async_session: AsyncSession):
@@ -95,10 +110,8 @@ async def remove_from_favorites(session, user_id: int, question_id: int):
     if not favorite_route:
         raise HTTPException(status_code=404, detail="Прогулка не найдена в избранном")
 
-    session.delete(favorite_route)
-    await session.commit()
-
-    return {"message": "Прогулка успешно удалена из избранного"}
+    await session.delete(favorite_route)
+    await session.commit()  # Фиксация изменений
 
 
 async def get_favorite_routes(session, user_id: int):
@@ -110,12 +123,14 @@ async def get_favorite_routes(session, user_id: int):
 
     favorite_routes_list = []
     for question in favorite_routes.scalars().all():
+        image_path = question.image_path
         short_question = ShortQuestionSchema(
             id=question.id,
             title=question.title,
             short_description=question.short_description,
             price=question.price,
-            rating=question.rating
+            rating=question.rating,
+            image_path=image_path
         )
         favorite_routes_list.append(short_question)
 

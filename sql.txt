@@ -1,13 +1,8 @@
 Что ещё доделать перед тем, как идти дальше:
 
 __ПРОГУЛКА__
-4) К маршруту добавить фото (можно?)
-5) Разобраться с ценой маршрута
-6) Карусель с фото/видео о маршруте
 7) Карта маршрута
 8) Точки маршрута (добавить таблицу с точками и ка-то их суммировать и отображать в поле с маршрутом)
-9) Разобраться с полем дистанции и времени маршрута (может есть специальные типы данных)
-10) Подборка кино и/или стихов, связанных с маршрутом
 11) Информация о точке маршрута (название, фото, краткую историю, аудиозапись, подборку кино и/или стихов)
 
 __КАЛЕНДАРЬ__
@@ -53,6 +48,46 @@ INSERT INTO survey (category) VALUES
 ('Наука'),
 ('История'),
 ('Войны');
+
+UPDATE survey
+SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/1.jpg'
+WHERE category = 'Литература и поэзия';
+
+UPDATE survey
+SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/2.jpg'
+WHERE category = 'Кинематограф';
+
+UPDATE survey
+SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/3.jpg'
+WHERE category = 'Мода';
+
+UPDATE survey
+SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/4.jpg'
+WHERE category = 'Прогулки под луной';
+
+UPDATE survey
+SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/5.jpg'
+WHERE category = 'Музыка';
+
+UPDATE survey
+SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/6.jpg'
+WHERE category = 'Живопись и архитектура';
+
+UPDATE survey
+SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/7.jpg'
+WHERE category = 'Детективы';
+
+UPDATE survey
+SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/8.jpg'
+WHERE category = 'Наука';
+
+UPDATE survey
+SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/9.jpg'
+WHERE category = 'История';
+
+UPDATE survey
+SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/10.jpg'
+WHERE category = 'Войны';
 
 ТУТ НАЧАЛЬНОЕ ЗАПОЛНЕНИЕ ТАБЛИЦЫ question
 

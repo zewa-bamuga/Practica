@@ -46,6 +46,7 @@ question = Table(
     Column("title", String),
     Column("description", String),
     Column("short_description", String),
+    Column("image_path", String),
 
     Column("points", Integer),
     Column("distance", Float),
@@ -140,6 +141,7 @@ class Question(Base):
     time = Column(Float)
     price = Column(Float)
     rating = Column(Float)
+    image_path = Column(String)
 
     survey_id = Column(Integer, ForeignKey("survey.id"))
     survey = relationship("Survey", back_populates="questions")

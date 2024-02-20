@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -12,6 +12,7 @@ class AllQuestionSchema(BaseModel):
     time: float
     price: float
     rating: float
+    image_path: str
 
     class Config:
         orm_mode = True
@@ -24,6 +25,7 @@ class ShortQuestionSchema(BaseModel):
     short_description: str
     price: float
     rating: float
+    image_path: str
 
     class Config:
         orm_mode = True

@@ -11,13 +11,17 @@ class UserBase(BaseModel):
             raise ValueError('Введены неверные значения')
         return ve
 
+
 class UserAuth(UserBase):
     password: constr(min_length=8, max_length=16)
+
     @validator('password')
     def validate_password(cls, v):
         if not re.match(r"^(?=.*[A-Za-z])(?=.*[0-9!#$%&*+\-.=>?@^_]).+$", v):
             raise ValueError('Пароль должен содержать по крайней мере одну букву и одну цифру или специальный символ')
         return v
+
+
 class UserCreate(UserBase):
     password: constr(min_length=8, max_length=16)
     confirm_password: constr(min_length=8, max_length=16)

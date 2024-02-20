@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.functions import is_user_authenticated
@@ -50,7 +51,11 @@ async def remove_from_favorites_route(
         async_session: AsyncSession = Depends(get_async_session)
 ):
     async with async_session as session:
-        return await remove_from_favorites(session, user.id, route_operation.question_id)
+        try:
+            await remove_from_favorites(session, user.id, route_operation.question_id)
+            return {"message": "Прогулка успешно удалена из избранного"}
+        except SQLAlchemyError as e:
+            return {"error": str(e)}
 
 
 @router.get("/favorite-routes", response_model=list[ShortQuestionSchema])
