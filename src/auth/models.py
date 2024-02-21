@@ -3,9 +3,10 @@ from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, ForeignKey, JSON, MetaData, Table, Float, Date, DateTime
 from sqlalchemy.orm import relationship
-from src.database import Base
+from src.database import Base, metadata
 
-metadata = MetaData()
+# Убрал эту переменную и проимпортировал, чтобы в одной переменной аккумулировалась информация о всех таблицах
+# metadata = MetaData()
 
 role = Table(
     "role",

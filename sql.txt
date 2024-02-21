@@ -482,3 +482,31 @@ VALUES ('Битва при Турской площади', '1918-08-25', 'Бит
 
 INSERT INTO historical_events (name, event_date, event_description)
 VALUES ('Освобождение Парижа во время Второй мировой войны', '1944-08-25', 'Освобождение Парижа в 1944 году является одним из важнейших моментов в истории Франции во время Второй мировой войны, когда войска Союзников под командованием генерала Шарля де Голля освободили город от немецкой оккупации.');
+
+
+файл docker-compose
+
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 99997777
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+
+  fatapi:
+    build:
+      context: .
+    env_file:
+      - .env-non-dev
+    container_name: fastapi_container
+    ports:
+      - "8000:8000"
+    command: ["/fastapi_app/docker/app.sh"]
+    depends_on:
+      - postgres

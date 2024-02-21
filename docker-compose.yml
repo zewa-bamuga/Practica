@@ -11,6 +11,16 @@ services:
     ports:
       - "5433:5432"
 
+  postgres_tests:
+    image: postgres:latest
+    container_name: postgres_test
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "6000:5432"
+
   fatapi:
     build:
       context: .
