@@ -32,7 +32,7 @@ async def change_password(request_data: ChangePasswordRequest, current_user: Use
 async def leave_feedback_route(feedback_data: FeedbackCreate, current_user: User = Depends(is_user_authenticated),
                                session: AsyncSession = Depends(get_async_session)):
     if not current_user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+        raise HTTPException(status_code=403, detail="Not authenticated")
 
     return await leave_feedback_async(feedback_data=feedback_data, user_id=current_user.id,
                                       device_name=feedback_data.device_name, os_version=feedback_data.os_version,

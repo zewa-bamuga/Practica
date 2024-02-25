@@ -10,8 +10,8 @@ async def get_survey_questions(session: AsyncSession):
     async with session as async_session:
         query = select(Survey)
         result = await async_session.execute(query)
-        return [SurveyBaseSchema(id=survey.id, category=survey.category) for survey in (await result.scalars()).all()]
-
+        surveys = result.scalars().all()
+        return [SurveyBaseSchema(id=survey.id, category=survey.category) for survey in surveys]
 
 
 async def process_survey_response(response: UserResponseSchema, user: User, async_session: AsyncSession):

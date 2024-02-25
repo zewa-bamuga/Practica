@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy import select, func
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.models import User, UserResponse, Question, RouteRating, FavoriteRoute
@@ -18,8 +19,13 @@ async def get_user_questions(user: User, async_session: AsyncSession) -> list[Sh
         )
         questions_with_images = []
         for question in user_questions.scalars().all():
-            with open(question.image_path, "rb") as image_file:
-                image_data = image_file.read()
+            image_data = None
+            image_path = None  # Добавьте это здесь
+
+            if question.image_path:
+                with open(question.image_path, "rb") as image_file:
+                    image_data = image_file.read()
+                image_path = question.image_path  # Присваиваем значение image_path
 
             question_with_image = ShortQuestionSchema(
                 id=question.id,
@@ -27,7 +33,8 @@ async def get_user_questions(user: User, async_session: AsyncSession) -> list[Sh
                 short_description=question.short_description,
                 price=question.price,
                 rating=question.rating,
-                image=image_data  # Добавляем данные изображения
+                image=image_data,
+                image_path=image_path  # Включаем image_path
             )
             questions_with_images.append(question_with_image)
 
@@ -100,18 +107,22 @@ async def add_to_favorites(session, user_id: int, question_id: int):
     return {"message": "Прогулка успешно добавлена в избранное"}
 
 
-async def remove_from_favorites(session, user_id: int, question_id: int):
-    existing_favorite = await session.execute(
-        select(FavoriteRoute)
-        .filter(FavoriteRoute.user_id == user_id)
-        .filter(FavoriteRoute.question_id == question_id)
-    )
-    favorite_route = existing_favorite.scalar_one_or_none()
-    if not favorite_route:
-        raise HTTPException(status_code=404, detail="Прогулка не найдена в избранном")
+async def remove_from_favorites(session: AsyncSession, user_id: int, question_id: int):
+    try:
+        existing_favorite = await session.execute(
+            select(FavoriteRoute)
+            .filter(FavoriteRoute.user_id == user_id)
+            .filter(FavoriteRoute.question_id == question_id)
+        )
+        favorite_route = existing_favorite.scalar_one_or_none()
+        if not favorite_route:
+            raise HTTPException(status_code=404, detail="Прогулка не найдена в избранном")
 
-    await session.delete(favorite_route)
-    await session.commit()  # Фиксация изменений
+        await session.delete(favorite_route)
+        await session.commit()  # Фиксация изменений
+        return {"message": "Прогулка успешно удалена из избранного"}
+    except SQLAlchemyError as e:
+        return {"error": str(e)}
 
 
 async def get_favorite_routes(session, user_id: int):

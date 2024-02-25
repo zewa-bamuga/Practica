@@ -50,12 +50,7 @@ async def remove_from_favorites_route(
         user: User = Depends(is_user_authenticated),
         async_session: AsyncSession = Depends(get_async_session)
 ):
-    async with async_session as session:
-        try:
-            await remove_from_favorites(session, user.id, route_operation.question_id)
-            return {"message": "Прогулка успешно удалена из избранного"}
-        except SQLAlchemyError as e:
-            return {"error": str(e)}
+    return await remove_from_favorites(async_session, user.id, route_operation.question_id)
 
 
 @router.get("/favorite-routes", response_model=list[ShortQuestionSchema])
