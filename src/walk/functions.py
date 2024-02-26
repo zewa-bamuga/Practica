@@ -20,12 +20,12 @@ async def get_user_questions(user: User, async_session: AsyncSession) -> list[Sh
         questions_with_images = []
         for question in user_questions.scalars().all():
             image_data = None
-            image_path = None  # Добавьте это здесь
+            image_path = None
 
             if question.image_path:
                 with open(question.image_path, "rb") as image_file:
                     image_data = image_file.read()
-                image_path = question.image_path  # Присваиваем значение image_path
+                image_path = question.image_path
 
             question_with_image = ShortQuestionSchema(
                 id=question.id,
@@ -34,7 +34,7 @@ async def get_user_questions(user: User, async_session: AsyncSession) -> list[Sh
                 price=question.price,
                 rating=question.rating,
                 image=image_data,
-                image_path=image_path  # Включаем image_path
+                image_path=image_path
             )
             questions_with_images.append(question_with_image)
 

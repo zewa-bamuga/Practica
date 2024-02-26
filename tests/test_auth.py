@@ -91,8 +91,6 @@ async def test_authenticate_user(ac: AsyncClient):
     response_data = response_get.json()
     assert "access_token" in response_data
     assert response_data["token_type"] == "bearer"
-    print("Access Token:", response_data["access_token"])
-    print("Декодирован:", response_data)
 
 
 @pytest.mark.run(order=8)

@@ -27,13 +27,17 @@ pytest -v -s --cov=src --cov-report=html tests/
 insert into role values (1, 'user', null), (2, 'admin', null);
 
 select * from alembic_version;
-select * from question;
-select * from route_rating;
-select * from survey;
+select * from public.role;
 select * from public.user;
+select * from survey;
+select * from question;
+select * from historical_events
 select * from user_response;
 select * from feedback;
+select * from route_rating;
+select * from favorite_route;
 select * from password_reset_code;
+
 
 DELETE FROM public.user
 WHERE id = 58;
@@ -52,46 +56,6 @@ INSERT INTO survey (category) VALUES
 ('Наука'),
 ('История'),
 ('Войны');
-
-UPDATE survey
-SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/1.jpg'
-WHERE category = 'Литература и поэзия';
-
-UPDATE survey
-SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/2.jpg'
-WHERE category = 'Кинематограф';
-
-UPDATE survey
-SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/3.jpg'
-WHERE category = 'Мода';
-
-UPDATE survey
-SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/4.jpg'
-WHERE category = 'Прогулки под луной';
-
-UPDATE survey
-SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/5.jpg'
-WHERE category = 'Музыка';
-
-UPDATE survey
-SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/6.jpg'
-WHERE category = 'Живопись и архитектура';
-
-UPDATE survey
-SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/7.jpg'
-WHERE category = 'Детективы';
-
-UPDATE survey
-SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/8.jpg'
-WHERE category = 'Наука';
-
-UPDATE survey
-SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/9.jpg'
-WHERE category = 'История';
-
-UPDATE survey
-SET image_path = 'jetbrains://pycharm/navigate/reference?project=practica&path=images/10.jpg'
-WHERE category = 'Войны';
 
 ТУТ НАЧАЛЬНОЕ ЗАПОЛНЕНИЕ ТАБЛИЦЫ question
 
@@ -137,7 +101,7 @@ SET description = 'Пройдите по пути Хемингуэя и погр
  	distance = 12000,
  	time = 170,
  	price = 0,
-	image_path = 'E:\Programming\Practica\images\1.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/1.jpg'
 WHERE id = 1;
 
 UPDATE question
@@ -148,7 +112,7 @@ SET title = 'Три мушкетера',
  	distance = 15000,
  	time = 180,
  	price = 0,
-	image_path = 'E:\Programming\Practica\images\2.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/2.jpg'
 WHERE id = 2;
 
 UPDATE question
@@ -159,7 +123,7 @@ SET title = 'Русские писатели в Париже',
     distance = 12000,
     time = 150,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\3.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/3.jpg'
 WHERE id = 3;
 
 UPDATE question
@@ -170,8 +134,9 @@ SET title = 'Париж в стихах',
     distance = 11000,
     time = 140,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\4.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/4.jpg'
 WHERE id = 4;
+
 
 UPDATE question
 SET title = 'Париж «Кода да Винчи»',
@@ -181,7 +146,7 @@ SET title = 'Париж «Кода да Винчи»',
     distance = 14000,
     time = 180,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\5.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/5.jpg'
 WHERE id = 5;
 
 UPDATE question
@@ -192,7 +157,7 @@ SET title = 'Россия (Наши в городе)',
     distance = 12000,
     time = 140,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\6.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/6.jpg'
 WHERE id = 6;
 
 UPDATE question
@@ -203,7 +168,7 @@ SET title = 'Камера, мотор! Париж кинофильмов',
     distance = 5000,
     time = 90,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\7.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/7.jpg'
 WHERE id = 7;
 
 UPDATE question
@@ -214,7 +179,7 @@ SET title = 'Прогулка с Амели',
     distance = 4000,
     time = 70,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\8.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/8.jpg'
 WHERE id = 8;
 
 UPDATE question
@@ -225,7 +190,7 @@ SET title = 'Париж актеров',
     distance = 6000,
     time = 80,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\9.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/9.jpg'
 WHERE id = 9;
 
 UPDATE question
@@ -236,7 +201,7 @@ SET title = 'Париж «Кода да Винчи»',
     distance = 5000,
     time = 80,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\10.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/10.jpg'
 WHERE id = 10;
 
 UPDATE question
@@ -247,7 +212,7 @@ SET title = 'Россия (Наши в городе)',
     distance = 7000,
     time = 100,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\11.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/11.jpg'
 WHERE id = 11;
 
 UPDATE question
@@ -258,7 +223,7 @@ SET title = 'Модный Париж',
     distance = 8000,
     time = 180,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\12.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/12.jpg'
 WHERE id = 12;
 
 UPDATE question
@@ -269,7 +234,7 @@ SET title = '«Полночь в Париже»',
     distance = 5000,
     time = 70,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\13.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/13.jpg'
 WHERE id = 13;
 
 UPDATE question
@@ -280,7 +245,7 @@ SET title = 'Пикантный Париж 18+',
     distance = 12000,
     time = 180,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\14.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/14.jpg'
 WHERE id = 14;
 
 UPDATE question
@@ -291,7 +256,7 @@ SET title = 'Россия (Наши в городе)',
     distance = 8000,
     time = 80,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\15.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/15.jpg'
 WHERE id = 15;
 
 UPDATE question
@@ -302,7 +267,7 @@ SET title = 'Париж музыкальный',
     distance = 14000,
     time = 160,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\16.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/16.jpg'
 WHERE id = 16;
 
 UPDATE question
@@ -313,7 +278,7 @@ SET title = 'Париж художников',
     distance = 10000,
     time = 120,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\17.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/17.jpg'
 WHERE id = 17;
 
 UPDATE question
@@ -324,7 +289,7 @@ SET title = 'Eye candy',
     distance = 7000,
     time = 110,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\18.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/18.jpg'
 WHERE id = 18;
 
 UPDATE question
@@ -335,7 +300,7 @@ SET title = 'Россия (Наши в городе)',
     distance = 9000,
     time = 140,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\19.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/19.jpg'
 WHERE id = 19;
 
 UPDATE question
@@ -346,7 +311,7 @@ SET title = 'Париж шпионов',
     distance = 2000,
     time = 90,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\20.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/20.jpg'
 WHERE id = 20;
 
 UPDATE question
@@ -357,7 +322,7 @@ SET title = 'Париж преступников и преступлений',
     distance = 8000,
     time = 190,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\21.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/21.jpg'
 WHERE id = 21;
 
 UPDATE question
@@ -368,7 +333,7 @@ SET title = 'Париж писателей',
     distance = 6000,
     time = 120,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\22.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/22.jpg'
 WHERE id = 22;
 
 UPDATE question
@@ -379,7 +344,7 @@ SET title = 'Три мушкетера',
 	distance = 15000,
 	time = 110,
 	price = 0,
-	image_path = 'E:\Programming\Practica\images\23.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/23.jpg'
 WHERE id = 23;
 
 UPDATE question
@@ -390,7 +355,7 @@ SET title = 'Париж научный',
     distance = 5000,
     time = 70,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\24.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/24.jpg'
 WHERE id = 24;
 
 UPDATE question
@@ -401,7 +366,7 @@ SET title = 'Россия (Наши в городе)',
     distance = 3000,
     time = 80,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\25.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/25.jpg'
 WHERE id = 25;
 
 UPDATE question
@@ -412,7 +377,7 @@ SET title = 'Ленин и Троцкий',
     distance = 16000,
     time = 210,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\26.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/26.jpg'
 WHERE id = 26;
 
 UPDATE question
@@ -423,7 +388,7 @@ SET title = 'Париж Петра Первого',
     distance = 10000,
     time = 150,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\27.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/27.jpg'
 WHERE id = 27;
 
 UPDATE question
@@ -434,7 +399,7 @@ SET title = 'Легенды Парижа',
     distance = 9000,
     time = 110,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\28.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/28.jpg'
 WHERE id = 28;
 
 UPDATE question
@@ -445,7 +410,7 @@ SET title = 'Париж Наполеона',
     distance = 16000,
     time = 190,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\29.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/29.jpg'
 WHERE id = 29;
 
 UPDATE question
@@ -456,7 +421,7 @@ SET title = 'Россия (Наши в городе)',
     distance = 15000,
     time = 160,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\30.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/30.jpg'
 WHERE id = 30;
 
 UPDATE question
@@ -467,7 +432,7 @@ SET title = 'Париж в оккупации',
     distance = 6000,
     time = 100,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\31.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/31.jpg'
 WHERE id = 31;
 
 UPDATE question
@@ -478,49 +443,11 @@ SET title = 'Париж Наполеона',
     distance = 8000,
     time = 180,
     price = 0,
-	image_path = 'E:\Programming\Practica\images\32.jpg'
+	image_path = 'C:/Users/TikhonovIB/PycharmProjects/Practica/images/32.jpg'
 WHERE id = 32;
 
 
-
-
-ТУТ ЗАПОЛНЕНИЕ ТАБЛИЦЫ historical_events
-
-INSERT INTO historical_events (name, event_date, event_description)
-VALUES ('Великая французская революция', '1789-07-14', 'Великая французская революция, начавшаяся 14 июля 1789 года, была одним из ключевых моментов в истории Франции, когда народ восстал против абсолютной монархии и стремился к установлению республиканской формы правления.');
-
-INSERT INTO historical_events (name, event_date, event_description)
-VALUES ('Основание Парижа римлянами', '250-01-01', 'Париж, один из самых известных городов мира, был основан римлянами в III веке до н.э. на острове Ситэ, расположенном на реке Сене, и стал важным центром культуры и торговли в Римской империи.');
-
-INSERT INTO historical_events (name, event_date, event_description)
-VALUES ('Осада Парижа', '845-01-01', 'Осада Парижа в 845 году является одним из ключевых событий в истории города, когда викинги под предводительством Рагнара Лодброк впервые атаковали и осадили Париж.');
-
-INSERT INTO historical_events (name, event_date, event_description)
-VALUES ('Постройка Эйфелевой башни', '1889-03-31', 'Эйфелева башня, символ Парижа и Франции, была построена в 1889 году как временное сооружение для Всемирной выставки в Париже и с тех пор стала одним из самых известных архитектурных памятников мира.');
-
-INSERT INTO historical_events (name, event_date, event_description)
-VALUES ('Взятие Парижа во время Столетней войны', '1418-01-01', 'Взятие Парижа во время Столетней войны (1418) стало одним из важнейших событий в истории конфликта между Англией и Францией, когда англичане вторглись в Париж и взяли его под контроль.');
-
-INSERT INTO historical_events (name, event_date, event_description)
-VALUES ('Революция 1830 года в Париже', '1830-07-27', 'Революция 1830 года, также известная как июльская революция, была восстанием парижан против королевской династии Бурбонов и привела к свержению Карла X и установлению конституционной монархии.');
-
-INSERT INTO historical_events (name, event_date, event_description)
-VALUES ('Парижская коммуна', '1871-03-18', 'Парижская коммуна 1871 года была первым социалистическим правительством, управлявшим Парижем после поражения Франции во Франко-прусской войне. Коммуна длилась всего несколько месяцев, но оказала значительное влияние на историю Франции и рабочего движения.');
-
-INSERT INTO historical_events (name, event_date, event_description)
-VALUES ('Строительство Лувра', '1142-4-2', 'Лувр, один из крупнейших музеев мира, начал свою историю как крепость в XII веке и постепенно превратился в королевский дворец и затем в музей, в котором собрана одна из самых впечатляющих коллекций искусства.');
-
-INSERT INTO historical_events (name, event_date, event_description)
-VALUES ('Первый международный фестиваль кино в Париже', '1932-06-01', 'Первый международный фестиваль кино в Париже в 1932 году стал первым крупным кинофестивалем в истории и привлек внимание к французскому кино и его значимости в мировой культуре.');
-
-INSERT INTO historical_events (name, event_date, event_description)
-VALUES ('Битва при Турской площади', '1918-08-25', 'Битва при Турской площади в 1918 году стала решающей в истории Первой мировой войны, когда союзники одержали победу над Центральными державами, что привело к окончанию войны и подписанию перемирия.');
-
-INSERT INTO historical_events (name, event_date, event_description)
-VALUES ('Освобождение Парижа во время Второй мировой войны', '1944-08-25', 'Освобождение Парижа в 1944 году является одним из важнейших моментов в истории Франции во время Второй мировой войны, когда войска Союзников под командованием генерала Шарля де Голля освободили город от немецкой оккупации.');
-
-
-файл docker-compose
+Файл docker-compose
 
 version: '3.7'
 

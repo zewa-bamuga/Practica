@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  postgres:
+  postgres_docker:
     image: postgres:latest
     container_name: postgres_container
     environment:
@@ -10,6 +10,18 @@ services:
       POSTGRES_DB: postgres
     ports:
       - "5433:5432"
+
+  fatapi:
+    build:
+      context: .
+    env_file:
+      - .env-non-dev
+    container_name: fastapi_container
+    ports:
+      - "8000:8000"
+    command: [ "/fastapi_app/docker/app.sh" ]
+    depends_on:
+      - postgres_docker
 
   postgres_tests:
     image: postgres:latest
@@ -20,15 +32,3 @@ services:
       POSTGRES_DB: postgres
     ports:
       - "6000:5432"
-
-  fatapi:
-    build:
-      context: .
-    env_file:
-      - .env-non-dev
-    container_name: fastapi_container
-    ports:
-      - "8000:8000"
-    command: ["/fastapi_app/docker/app.sh"]
-    depends_on:
-      - postgres
