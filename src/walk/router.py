@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi.params import Path
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -44,13 +45,13 @@ async def add_to_favorites_route(
         return await add_to_favorites(session, user.id, route_operation.question_id)
 
 
-@router.delete("/remove-from-favorites", response_model=dict)
+@router.delete("/remove-from-favorites/{question_id}", response_model=dict)
 async def remove_from_favorites_route(
-        route_operation: RouteOperationSchema,
+        question_id: int = Path(..., title="Question ID"),
         user: User = Depends(is_user_authenticated),
         async_session: AsyncSession = Depends(get_async_session)
 ):
-    return await remove_from_favorites(async_session, user.id, route_operation.question_id)
+    return await remove_from_favorites(async_session, user.id, question_id)
 
 
 @router.get("/favorite-routes", response_model=list[ShortQuestionSchema])
