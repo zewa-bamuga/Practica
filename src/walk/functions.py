@@ -58,8 +58,6 @@ async def get_question_by_id(question_id: int, user: User, async_session: AsyncS
         user_response_query = select(UserResponse).filter(UserResponse.user_id == user.id)
         user_response_result = await session.execute(user_response_query)
         user_response = user_response_result.scalar()
-        if not user_response:
-            raise HTTPException(status_code=404, detail="Запись пользователя не найдена")
         survey_id = user_response.survey_id
         question_query = select(Question).filter(Question.id == question_id, Question.survey_id == survey_id)
         question_result = await session.execute(question_query)

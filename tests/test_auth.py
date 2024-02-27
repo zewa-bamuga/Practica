@@ -1,10 +1,10 @@
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
 from httpx import AsyncClient
 from sqlalchemy import insert, select
 
-from src.auth.jwt import verify_jwt_token
 from src.auth.models import role, password_reset_code
-from src.auth.schemas import UserBase
 from tests.conftest import client, async_session_maker
 
 
@@ -30,6 +30,7 @@ def test_register():
 
     assert response.status_code == 201
 
+
 @pytest.mark.run(order=2)
 def test_register_email_already():
     response = client.post("/authentication/registration", json={
@@ -41,6 +42,7 @@ def test_register_email_already():
     assert response.status_code == 400
     response_data = response.json()
     assert response_data["detail"] == "Пользователь с этой электронной почтой уже существует!"
+
 
 @pytest.mark.run(order=3)
 def test_register_password_mismatch():

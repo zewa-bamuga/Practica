@@ -275,6 +275,25 @@ async def test_add_to_favorites(ac: AsyncClient):
 
     assert response.status_code == 200
 
+@pytest.mark.run(order=26)
+async def test_fail_add_to_favorites(ac: AsyncClient):
+    response_auth = await ac.post("/authentication/authentification", json={
+        "email": "user@example.com",
+        "password": "!321Password"
+    })
+
+    response_data = response_auth.json()
+
+    response = await ac.post("/walk/add-to-favorites", headers={
+        "Authorization": response_data["access_token"]
+    }, json={
+        "question_id": 2
+    })
+
+    assert response.status_code == 400
+    response_json = response.json()
+    assert response_json["detail"] == "Прогулка уже добавлена в избранное"
+
 
 @pytest.mark.run(order=26)
 async def test_favorite(ac: AsyncClient):
