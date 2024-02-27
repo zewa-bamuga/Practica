@@ -91,38 +91,40 @@ async def create_route_rating(route_rating_create: RouteRatingCreate, user: User
     return {"message": "Оценка успешно добавлена или обновлена"}
 
 
-async def add_to_favorites(session, user_id: int, question_id: int):
-    existing_favorite = await session.execute(
-        select(FavoriteRoute)
-        .filter(FavoriteRoute.user_id == user_id)
-        .filter(FavoriteRoute.question_id == question_id)
-    )
-    if existing_favorite.scalar():
-        raise HTTPException(status_code=400, detail="Прогулка уже добавлена в избранное")
-
-    favorite_route = FavoriteRoute(user_id=user_id, question_id=question_id)
-    session.add(favorite_route)
-    await session.commit()
-
-    return {"message": "Прогулка успешно добавлена в избранное"}
-
-
-async def remove_from_favorites(session: AsyncSession, user_id: int, question_id: int):
-    try:
+async def add_to_favorites(async_session: AsyncSession, user_id: int, question_id: int):
+    async with async_session as session:
         existing_favorite = await session.execute(
             select(FavoriteRoute)
             .filter(FavoriteRoute.user_id == user_id)
             .filter(FavoriteRoute.question_id == question_id)
         )
-        favorite_route = existing_favorite.scalar_one_or_none()
-        if not favorite_route:
-            raise HTTPException(status_code=404, detail="Прогулка не найдена в избранном")
+        if existing_favorite.scalar():
+            raise HTTPException(status_code=400, detail="Прогулка уже добавлена в избранное")
 
-        await session.delete(favorite_route)
-        await session.commit()  # Фиксация изменений
-        return {"message": "Прогулка успешно удалена из избранного"}
-    except SQLAlchemyError as e:
-        return {"error": str(e)}
+        favorite_route = FavoriteRoute(user_id=user_id, question_id=question_id)
+        session.add(favorite_route)
+        await session.commit()
+
+    return {"message": "Прогулка успешно добавлена в избранное"}
+
+
+async def remove_from_favorites(async_session: AsyncSession, user_id: int, question_id: int):
+    async with async_session as session:
+        try:
+            existing_favorite = await session.execute(
+                select(FavoriteRoute)
+                .filter(FavoriteRoute.user_id == user_id)
+                .filter(FavoriteRoute.question_id == question_id)
+            )
+            favorite_route = existing_favorite.scalar_one_or_none()
+            if not favorite_route:
+                raise HTTPException(status_code=404, detail="Прогулка не найдена в избранном")
+
+            await session.delete(favorite_route)
+            await session.commit()  # Фиксация изменений
+            return {"message": "Прогулка успешно удалена из избранного"}
+        except SQLAlchemyError as e:
+            return {"error": str(e)}
 
 
 async def get_favorite_routes(session, user_id: int):

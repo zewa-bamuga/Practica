@@ -39,10 +39,9 @@ async def create_route_rating_route(route_rating_create: RouteRatingCreate, user
 async def add_to_favorites_route(
         route_operation: RouteOperationSchema,
         user: User = Depends(is_user_authenticated),
-        async_session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session)
 ):
-    async with async_session as session:
-        return await add_to_favorites(session, user.id, route_operation.question_id)
+    return await add_to_favorites(session, user.id, route_operation.question_id)
 
 
 @router.delete("/remove-from-favorites/{question_id}", response_model=dict)

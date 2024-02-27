@@ -1,14 +1,16 @@
 import datetime
 
 import pytest
+from fastapi import HTTPException
 from httpx import AsyncClient
 from sqlalchemy import insert, select
 
 from src.auth.models import historical_events
+from src.calendar.functions import get_historical_event_by_id
 from tests.conftest import async_session_maker
 
 
-@pytest.mark.run(order=24)
+@pytest.mark.run(order=28)
 async def test_add_historical_events():
     async with async_session_maker() as session:
         historical_events_data = [
@@ -49,7 +51,7 @@ async def test_add_historical_events():
         assert len(historical_events_records) == 11, "Неверное количество вопросов добавлено"
 
 
-@pytest.mark.run(order=25)
+@pytest.mark.run(order=29)
 async def test_short_events(ac: AsyncClient):
     response_auth = await ac.post("/authentication/authentification", json={
         "email": "user@example.com",
@@ -65,7 +67,7 @@ async def test_short_events(ac: AsyncClient):
     assert response.status_code == 200
 
 
-@pytest.mark.run(order=26)
+@pytest.mark.run(order=30)
 async def test_event_by_id(ac: AsyncClient):
     response_auth = await ac.post("/authentication/authentification", json={
         "email": "user@example.com",

@@ -1,14 +1,12 @@
 import pytest
 from httpx import AsyncClient
 from sqlalchemy import insert, select
-from sqlalchemy.ext.asyncio import async_session
 
-from src.auth.models import question, User, FavoriteRoute
-from src.main import app
-from tests.conftest import async_session_maker, client
+from src.auth.models import question
+from tests.conftest import async_session_maker
 
 
-@pytest.mark.run(order=17)
+@pytest.mark.run(order=20)
 async def test_add_questions():
     async with async_session_maker() as session:
         question_data = [
@@ -181,7 +179,7 @@ async def test_add_questions():
         assert len(question_records) == 31, "Неверное количество вопросов добавлено"
 
 
-@pytest.mark.run(order=18)
+@pytest.mark.run(order=21)
 async def test_user_questions(ac: AsyncClient):
     response_auth = await ac.post("/authentication/authentification", json={
         "email": "user@example.com",
@@ -202,7 +200,27 @@ async def test_user_questions(ac: AsyncClient):
     assert len(questions) == 10, "Неверное количество вопросов для пользователя"
 
 
-@pytest.mark.run(order=19)
+@pytest.mark.run(order=22)
+async def test_fail_question_by_id(ac: AsyncClient):
+    response_auth = await ac.post("/authentication/authentification", json={
+        "email": "user@example.com",
+        "password": "!321Password"
+    })
+
+    response_data = response_auth.json()
+
+    access_token = response_data["access_token"]
+    question_id = 100
+
+    response = await ac.get(f"/walk/questions/{question_id}", headers={
+        "Authorization": access_token
+    })
+
+    assert response.status_code == 404
+    response_json = response.json()
+    assert response_json["detail"] == "Вы не выбрали категорию для этого запроса"
+
+@pytest.mark.run(order=23)
 async def test_question_by_id(ac: AsyncClient):
     response_auth = await ac.post("/authentication/authentification", json={
         "email": "user@example.com",
@@ -221,7 +239,7 @@ async def test_question_by_id(ac: AsyncClient):
     assert response.status_code == 200
 
 
-@pytest.mark.run(order=20)
+@pytest.mark.run(order=24)
 async def test_create_rating(ac: AsyncClient):
     response_auth = await ac.post("/authentication/authentification", json={
         "email": "user@example.com",
@@ -240,7 +258,7 @@ async def test_create_rating(ac: AsyncClient):
     assert response.status_code == 200
 
 
-@pytest.mark.run(order=21)
+@pytest.mark.run(order=25)
 async def test_add_to_favorites(ac: AsyncClient):
     response_auth = await ac.post("/authentication/authentification", json={
         "email": "user@example.com",
@@ -249,14 +267,16 @@ async def test_add_to_favorites(ac: AsyncClient):
 
     response_data = response_auth.json()
 
-    response = await ac.post("/walk/add-to-favorites", json={"question_id": 2}, headers={
+    response = await ac.post("/walk/add-to-favorites", headers={
         "Authorization": response_data["access_token"]
+    }, json={
+        "question_id": 2
     })
 
     assert response.status_code == 200
 
 
-@pytest.mark.run(order=22)
+@pytest.mark.run(order=26)
 async def test_favorite(ac: AsyncClient):
     response_auth = await ac.post("/authentication/authentification", json={
         "email": "user@example.com",
@@ -272,6 +292,7 @@ async def test_favorite(ac: AsyncClient):
     assert response.status_code == 200
 
 
+@pytest.mark.run(order=27)
 async def test_remove_from_favorites_route(ac: AsyncClient):
     response_auth = await ac.post("/authentication/authentification", json={
         "email": "user@example.com",

@@ -6,7 +6,7 @@ from src.auth.models import survey
 from tests.conftest import async_session_maker
 
 
-@pytest.mark.run(order=10)
+@pytest.mark.run(order=11)
 async def test_add_survey():
     async with async_session_maker() as session:
         survey_data = [
@@ -36,7 +36,7 @@ async def test_add_survey():
             assert record == (data["id"], data["category"]), f"Ошибка в записи опроса {data['id']}"
 
 
-@pytest.mark.run(order=11)
+@pytest.mark.run(order=12)
 async def test_question_handler(ac: AsyncClient):
     response_auth = await ac.post("/authentication/authentification", json={
         "email": "user@example.com",
@@ -57,7 +57,7 @@ async def test_question_handler(ac: AsyncClient):
     assert len(questions) == 10
 
 
-@pytest.mark.run(order=12)
+@pytest.mark.run(order=13)
 async def test_submit_survey_response(ac: AsyncClient):
     response_auth = await ac.post("/authentication/authentification", json={
         "email": "user@example.com",

@@ -28,10 +28,6 @@ async def change_password_async(user_email: str, old_password: str, new_password
 async def leave_feedback_async(feedback_data: FeedbackCreate, user_id: int, device_name: str, os_version: str,
                                app_version: str,
                                session: AsyncSession = Depends(get_async_session)):
-    existing_user = await session.execute(select(User).where(User.id == user_id))
-    user = existing_user.scalar()
-    if not user:
-        raise HTTPException(status_code=400, detail="Пользователь не найден")
 
     feedback = Feedback(user_id=user_id, text=feedback_data.text, device_name=device_name,
                         os_version=os_version, app_version=app_version)

@@ -17,13 +17,14 @@ async def get_historical_events(session: AsyncSession):
                 events.scalars().all()]
 
 
-async def get_historical_event_by_id(session: AsyncSession, event_id: int) -> Optional[HistoricalEventDetail]:
+async def get_historical_event_by_id(session: AsyncSession, event_id: int) -> HistoricalEvent:
     async with session as async_session:
         try:
             query = select(HistoricalEvent).filter(HistoricalEvent.id == event_id)
             event = await async_session.execute(query)
-            if not event:
+            event_detail = event.scalars().first()
+            if not event_detail:
                 raise HTTPException(status_code=404, detail="Event not found")
-            return event.scalars().first()
+            return event_detail
         except Exception as e:
             raise HTTPException(status_code=500, detail="Internal Server Error")

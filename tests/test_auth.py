@@ -2,7 +2,9 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy import insert, select
 
+from src.auth.jwt import verify_jwt_token
 from src.auth.models import role, password_reset_code
+from src.auth.schemas import UserBase
 from tests.conftest import client, async_session_maker
 
 
@@ -28,6 +30,17 @@ def test_register():
 
     assert response.status_code == 201
 
+@pytest.mark.run(order=2)
+def test_register_email_already():
+    response = client.post("/authentication/registration", json={
+        "email": "user@example.com",
+        "password": "Password123!",
+        "confirm_password": "Password123!"
+    })
+
+    assert response.status_code == 400
+    response_data = response.json()
+    assert response_data["detail"] == "Пользователь с этой электронной почтой уже существует!"
 
 @pytest.mark.run(order=3)
 def test_register_password_mismatch():
@@ -94,6 +107,19 @@ async def test_authenticate_user(ac: AsyncClient):
 
 
 @pytest.mark.run(order=8)
+async def test_invalid_email_validation(ac: AsyncClient):
+    response = await ac.post("/authentication/authentification", json={
+        "email": "#tikhonov.igor2028@yandex.ru",
+        "password": "looooooool1"
+    })
+
+    assert response.status_code == 422
+
+    response_json = response.json()
+    assert any(detail['msg'] == 'Value error, Введены неверные значения' for detail in response_json['detail'])
+
+
+@pytest.mark.run(order=9)
 async def test_invalid_authentication():
     auth_data = {
         "email": "nonexistent_user@example.com",
@@ -104,7 +130,7 @@ async def test_invalid_authentication():
     assert response.json()["detail"] == "Неверное имя пользователя или пароль"
 
 
-@pytest.mark.run(order=9)
+@pytest.mark.run(order=10)
 async def test_invalid_authentication2():
     auth_data = {
         "email": "user@example.com",
