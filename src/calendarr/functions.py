@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.models import HistoricalEvent
-from src.calendar.schemas import ShortHistoricalEvents, HistoricalEventDetail
+from src.calendarr.schemas import ShortHistoricalEvents, HistoricalEventDetail
 
 
 async def get_historical_events(session: AsyncSession):

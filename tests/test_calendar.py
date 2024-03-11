@@ -6,7 +6,7 @@ from httpx import AsyncClient
 from sqlalchemy import insert, select
 
 from src.auth.models import historical_events
-from src.calendar.functions import get_historical_event_by_id
+from src.calendarr.functions import get_historical_event_by_id
 from tests.conftest import async_session_maker
 
 
@@ -60,7 +60,7 @@ async def test_short_events(ac: AsyncClient):
 
     response_data = response_auth.json()
 
-    response = await ac.get("/calendar/events", headers={
+    response = await ac.get("/calendarr/events", headers={
         "Authorization": response_data["access_token"]
     })
 
@@ -79,7 +79,7 @@ async def test_event_by_id(ac: AsyncClient):
     access_token = response_data["access_token"]
     event_id = 2
 
-    response = await ac.get(f"/calendar/events/{event_id}", headers={
+    response = await ac.get(f"/calendarr/events/{event_id}", headers={
         "Authorization": access_token
     })
 

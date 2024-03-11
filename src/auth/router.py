@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth import schemas
-from src.auth.functions import register_async, authenticate_async, request_password_reset, confirm_password_reset
+from src.auth.functions import register_and_authenticate_async, authenticate_async, request_password_reset, confirm_password_reset
 from src.auth.schemas import PasswordResetRequest, PasswordResetConfirm
 from src.database import get_async_session
 
@@ -12,9 +12,9 @@ router = APIRouter(
 )
 
 
-@router.post("/registration", response_model=schemas.User, status_code=201)
+@router.post("/registration")
 async def register_user_route(user_data: schemas.UserCreate, session: AsyncSession = Depends(get_async_session)):
-    return await register_async(session=session, user_data=user_data)
+    return await register_and_authenticate_async(user_data, session=session)
 
 
 @router.post("/password/reset/request", status_code=200)

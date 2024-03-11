@@ -20,7 +20,7 @@ apikey_scheme = APIKeyHeader(name="Authorization")
 
 
 # Функция для регистрации пользователя
-async def register_async(user_data: UserCreate, session: AsyncSession = Depends(get_async_session)):
+async def register_and_authenticate_async(user_data: UserCreate, session: AsyncSession = Depends(get_async_session)):
     existing_user = await session.execute(select(User).where(User.email == user_data.email))
     if existing_user.scalar():
         raise HTTPException(status_code=400, detail="Пользователь с этой электронной почтой уже существует!")
@@ -31,8 +31,8 @@ async def register_async(user_data: UserCreate, session: AsyncSession = Depends(
 
     await send_hello(user)
 
-    return user
-
+    jwt_token = create_jwt_token({"sub": user.email})
+    return {"access_token": jwt_token, "token_type": "bearer"}
 
 # Функция для отправки на почту сообщение о регистрации
 async def send_hello(user: User):

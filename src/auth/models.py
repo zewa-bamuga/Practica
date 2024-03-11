@@ -1,7 +1,7 @@
 import secrets
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, ForeignKey, JSON, MetaData, Table, Float, Date, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, JSON, Table, Float, Date, DateTime
 from sqlalchemy.orm import relationship
 from src.database import Base, metadata
 

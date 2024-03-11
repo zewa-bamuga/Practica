@@ -5,12 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.functions import is_user_authenticated
 from src.auth.models import User
-from src.calendar.functions import get_historical_events, get_historical_event_by_id
-from src.calendar.schemas import ShortHistoricalEvents, HistoricalEventDetail
+from src.calendarr.functions import get_historical_events, get_historical_event_by_id
+from src.calendarr.schemas import ShortHistoricalEvents, HistoricalEventDetail
 from src.database import get_async_session
 
 router = APIRouter(
-    prefix="/calendar",
+    prefix="/calendarr",
     tags=["Calendar"]
 )
 

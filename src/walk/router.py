@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
 from fastapi.params import Path
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.functions import is_user_authenticated
